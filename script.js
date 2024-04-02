@@ -7,8 +7,8 @@ const resetBtn = document.querySelector("#resetBtn");
 let interval;
 let totalSeconds = 5; // Tempo inicial do cronômetro
 let listaExercicios = [];
-let exercicioAtual = 0;
-let offset = 0;
+let exercicioAtual = parseInt(localStorage.getItem('exercicioAtual')) || 0;
+let offset = parseInt(localStorage.getItem('offset')) || 0;
 let isPaused = false;
 
 // Verifica se há dados salvos no localStorage e os recupera, se houver
@@ -77,12 +77,15 @@ function resetTimer() {
 function exibirExercicio() {
     const dificuldadeExercicio = document.getElementById('dificuldade_exercicio');
     const descricaoExercicio = document.getElementById('descricao_exercicio');
+    const nomeExercicio = document.getElementById('nome_exercicio')
 
     // Ocultar exercício anterior
+    nomeExercicio.innerText = "";
     dificuldadeExercicio.innerText = "";
     descricaoExercicio.innerText = "";
 
     // Exibir novo exercício
+    nomeExercicio.innerText = listaExercicios[exercicioAtual].name
     dificuldadeExercicio.innerText = listaExercicios[exercicioAtual].difficulty;
     descricaoExercicio.innerText = listaExercicios[exercicioAtual].instructions;
 
@@ -101,14 +104,17 @@ function exibirExercicio() {
             // Ocultar exercício após o término do cronômetro
             dificuldadeExercicio.innerText = "";
             descricaoExercicio.innerText = "";
+            nomeExercicio.innerText = "";
             // Atualizar exercício ou reiniciar ciclo
             if (exercicioAtual === 9) {
                 offset += 10;
-                exercicioAtual = 0;
+                exercicioAtual = -1;
+                localStorage.setItem('offset', offset)
                 getExercises(); // Busca novos exercícios da API
-            } else {
-                exercicioAtual++;
             }
+                exercicioAtual++;
+                localStorage.setItem('exercicioAtual', exercicioAtual)
+            
             // Reiniciar cronômetro principal
             resetTimer();
             // Exibir botões de controle do cronômetro
@@ -130,7 +136,14 @@ function getExercises() {
     })
         .then(response => response.json())
         .then(dados => {
-            listaExercicios = dados;
+            listaExercicios = dados.map(exercise => {
+                return {
+                    name: exercise.name,
+                    difficulty: exercise.difficulty,
+                    instructions: exercise.instructions,
+                }
+            })
+            console.log(listaExercicios)
         })
         .catch(error => console.log(error))
 }
