@@ -11,48 +11,55 @@ let exercicioAtual = 0;
 let offset = 0;
 let isPaused = false;
 
+// Verifica se há dados salvos no localStorage e os recupera, se houver
+if (localStorage.getItem('pomodoroTimer')) {
+    totalSeconds = parseInt(localStorage.getItem('pomodoroTimer'));
+}
+
 startBtn.addEventListener("click", startTimer);
 pauseBtn.addEventListener("click", pauseTimer);
 resumeBtn.addEventListener("click", resumeTimer);
 resetBtn.addEventListener("click", resetTimer);
 
 function formatTime(time) {
-  return time < 10 ? `0${time}` : time;
+    return time < 10 ? `0${time}` : time;
 }
 
 function startTimer() {
-  interval = setInterval(() => {
-    if (totalSeconds <= 0) {
-      clearInterval(interval);
-      exibirExercicio();
-      return;
-    }
+    interval = setInterval(() => {
+        if (totalSeconds <= 0) {
+            clearInterval(interval);
+            exibirExercicio();
+            return;
+        }
 
-    if (!isPaused) {
-      totalSeconds--;
-      const minutes = Math.floor(totalSeconds / 60);
-      const seconds = totalSeconds % 60;
+        if (!isPaused) {
+            totalSeconds--;
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
 
-      timerDisplay.textContent = `${formatTime(minutes)}:${formatTime(seconds)}`;
-    }
-  }, 1000);
+            timerDisplay.textContent = `${formatTime(minutes)}:${formatTime(seconds)}`;
+            // Salva o tempo atual no localStorage sempre que houver uma alteração
+            localStorage.setItem('pomodoroTimer', totalSeconds.toString());
+        }
+    }, 1000);
 
-  startBtn.style.display = "none";
-  pauseBtn.style.display = "inline-block";
+    startBtn.style.display = "none";
+    pauseBtn.style.display = "inline-block";
 }
 
 function pauseTimer() {
-  clearInterval(interval);
-  pauseBtn.style.display = "none";
-  resumeBtn.style.display = "inline-block";
-  isPaused = true;
+    clearInterval(interval);
+    pauseBtn.style.display = "none";
+    resumeBtn.style.display = "inline-block";
+    isPaused = true;
 }
 
 function resumeTimer() {
-  isPaused = false;
-  startTimer();
-  pauseBtn.style.display = "inline-block";
-  resumeBtn.style.display = "none";
+    isPaused = false;
+    startTimer();
+    pauseBtn.style.display = "inline-block";
+    resumeBtn.style.display = "none";
 }
 
 function resetTimer() {
@@ -63,9 +70,11 @@ function resetTimer() {
     pauseBtn.style.display = "none";
     resumeBtn.style.display = "none";
     isPaused = false; // Certifica-se de que o timer não esteja pausado
-  }
-  
-  function exibirExercicio() {
+    // Remove os dados do localStorage ao resetar o timer
+    localStorage.removeItem('pomodoroTimer');
+}
+
+function exibirExercicio() {
     const dificuldadeExercicio = document.getElementById('dificuldade_exercicio');
     const descricaoExercicio = document.getElementById('descricao_exercicio');
 
@@ -113,21 +122,18 @@ function resetTimer() {
     }, 1000);
 }
 
-
-
 function getExercises() {
-  fetch("https://api.api-ninjas.com/v1/exercises?type=stretching&offset=" + offset, {
-    method: 'GET',
-    headers: { 'X-Api-Key': 'K60s2IpHzUaQ3fAtMHfcKQ==7F60dailImM25omw'},
-    contentType: 'application/json',
-  })
-  .then(response => response.json())
-  .then(dados => {
-    listaExercicios = dados;
-  })
-  .catch(error => console.log(error))
+    fetch("https://api.api-ninjas.com/v1/exercises?type=stretching&offset=" + offset, {
+        method: 'GET',
+        headers: { 'X-Api-Key': 'K60s2IpHzUaQ3fAtMHfcKQ==7F60dailImM25omw' },
+        contentType: 'application/json',
+    })
+        .then(response => response.json())
+        .then(dados => {
+            listaExercicios = dados;
+        })
+        .catch(error => console.log(error))
 }
 
 // Chamar a função para carregar os exercícios inicialmente
 getExercises();
-
