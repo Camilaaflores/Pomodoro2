@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pomodoro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Pomodoro</h1>
+    <div id="timerDisplay">00:05</div>
+    <h3 id="dificuldade_exercicio"></h3>
+    <p id="descricao_exercicio"></p>
+    <p id="contador"></p>
+    <div class="buttons">
+      <button class="btn" id="startBtn">Iniciar</button>
+      <button class="btn" id="pauseBtn" style="display: none">Pausar</button>
+      <button class="btn" id="resumeBtn" style="display: none">Continuar</button>
+      <button class="btn" id="resetBtn">Resetar</button>
+    </div>
+  </div>
+</body>
+</html>
