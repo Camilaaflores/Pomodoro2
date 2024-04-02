@@ -68,51 +68,52 @@ function resetTimer() {
   function exibirExercicio() {
     const dificuldadeExercicio = document.getElementById('dificuldade_exercicio');
     const descricaoExercicio = document.getElementById('descricao_exercicio');
-  
+
     // Ocultar exercício anterior
     dificuldadeExercicio.innerText = "";
     descricaoExercicio.innerText = "";
-  
+
     // Exibir novo exercício
     dificuldadeExercicio.innerText = listaExercicios[exercicioAtual].difficulty;
     descricaoExercicio.innerText = listaExercicios[exercicioAtual].instructions;
-  
-    // Esconder botões de controle do cronômetro
-    startBtn.style.display = "none";
-    pauseBtn.style.display = "none";
-    resumeBtn.style.display = "none";
-    resetBtn.style.display = "none";
-  
+
     // Reiniciar cronômetro principal
     resetTimer();
-  
-    // Aguardar 1 segundo antes de iniciar o cronômetro de 5 segundos
-    setTimeout(() => {
-      // Exibir botões de controle do cronômetro
-      startBtn.style.display = "inline-block";
-      resetBtn.style.display = "inline-block";
-  
-      // Cronômetro de 5 segundos para o cliente fazer o exercício
-      let segundosRestantes = 5;
-      const segundoCronometro = setInterval(() => {
+
+    // Exibir botões de controle do cronômetro
+    startBtn.style.display = "inline-block";
+    resetBtn.style.display = "inline-block";
+
+    // Cronômetro de 5 segundos para o cliente fazer o exercício
+    let segundosRestantes = 5;
+    const segundoCronometro = setInterval(() => {
         if (segundosRestantes === 0) {
-          clearInterval(segundoCronometro);
-          // Atualizar exercício ou reiniciar ciclo
-          if (exercicioAtual === 9) {
-            offset += 10;
-            exercicioAtual = 0;
-            getExercises();
-          } else {
-            exercicioAtual++;
-          }
-          return;
+            clearInterval(segundoCronometro);
+            // Ocultar exercício após o término do cronômetro
+            dificuldadeExercicio.innerText = "";
+            descricaoExercicio.innerText = "";
+            // Atualizar exercício ou reiniciar ciclo
+            if (exercicioAtual === 9) {
+                offset += 10;
+                exercicioAtual = 0;
+                getExercises(); // Busca novos exercícios da API
+            } else {
+                exercicioAtual++;
+            }
+            // Reiniciar cronômetro principal
+            resetTimer();
+            // Exibir botões de controle do cronômetro
+            startBtn.style.display = "inline-block";
+            resetBtn.style.display = "inline-block";
+            return;
         }
         // Atualizar o display do cronômetro de 5 segundos
         timerDisplay.textContent = `00:${formatTime(segundosRestantes)}`;
         segundosRestantes--;
-      }, 1000);
     }, 1000);
-  }  
+}
+
+
 
 function getExercises() {
   fetch("https://api.api-ninjas.com/v1/exercises?type=stretching&offset=" + offset, {
